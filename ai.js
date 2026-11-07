@@ -1,6 +1,6 @@
 /* M/S, M.K. Leather: AI chat reply (index.html এর চ্যাটে বসে) */
 (function () {
-  var WORKER_URL = 'PASTE_YOUR_WORKER_URL_HERE';
+  var WORKER_URL = 'https://muddy-flower-d91b.msmkleather200.workers.dev';
   var busy = false;
   var CN = { wallet: 'মানিব্যাগ', shoe: 'জুতা', bag: 'ব্যাগ', belt: 'বেল্ট' };
 
