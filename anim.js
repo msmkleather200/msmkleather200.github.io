@@ -1,5 +1,5 @@
-/* M/S, M.K. Leather - ভাউচার অ্যানিমেশন
-   1) পণ্যের পাতায় Collect চাপলে ভাউচার ফোঁটা ফোঁটা দাগ বরাবর ছিঁড়ে নিচে পড়ে যায়
+/* M/S, M.K. Leather - ভাউচার অ্যানিমেশন (ভার্সন ২)
+   1) পণ্যের পাতায় Collect চাপলে ভাউচার ফোঁটা ফোঁটা দাগ বরাবর ছিঁড়ে নিচে পড়ে যায়, আর ওই জায়গা থেকে চিরতরে সরে যায়
    2) অর্ডার পাতায় ভাউচার বাছলে ভাউচার স্ক্রিনের মাঝে এসে নিজে নিজে ছাড়ের ঘরে ঢুকে যায়
    শব্দ কোড দিয়েই বানানো (কোনো অডিও ফাইল নেই), সাথে ফোনের ভাইব্রেশন */
 (function () {
@@ -9,8 +9,6 @@
 .tp.r{animation:tpr .95s cubic-bezier(.45,0,.85,.55) forwards}
 @keyframes tpl{0%{transform:none;opacity:1}22%{transform:translateX(-8px) rotate(-7deg);opacity:1}100%{transform:translate(-26px,300px) rotate(-30deg);opacity:0}}
 @keyframes tpr{0%{transform:none;opacity:1}22%{transform:translateX(8px) rotate(6deg);opacity:1}100%{transform:translate(30px,340px) rotate(26deg);opacity:0}}
-.vk.rev{animation:vkin .55s ease both}
-@keyframes vkin{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 .fly{position:fixed;margin:0!important;z-index:60;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.45);transform-origin:center center}
 .pulse{display:inline-block;animation:pls .6s ease}
 @keyframes pls{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
@@ -78,6 +76,29 @@
     } catch (e) {}
   }
 
+  /* ===== ছেঁড়ার পর কার্ড তালিকা থেকে সরিয়ে ফেলা ===== */
+  function gone(card) {
+    var par = card.parentNode;
+    var horiz = !!(par && par.classList && par.classList.contains('vsc'));
+    var r = card.getBoundingClientRect();
+    function done() {
+      var box = card.closest ? card.closest('.vbx') : null;
+      card.remove();
+      if (box && !box.querySelector('.vk')) box.remove();
+    }
+    if (RM() || !card.animate || !r.width || !r.height) {
+      done();
+      return;
+    }
+    card.style.visibility = 'hidden';
+    card.style.overflow = 'hidden';
+    var kf = horiz
+      ? [{ width: r.width + 'px', marginRight: '0px' }, { width: '0px', marginRight: '-10px' }]
+      : [{ height: r.height + 'px', marginBottom: '12px' }, { height: '0px', marginBottom: '0px' }];
+    var an = card.animate(kf, { duration: 280, easing: 'ease', fill: 'forwards' });
+    an.onfinish = done;
+  }
+
   /* ===== ভাউচার ছেঁড়া ===== */
   function tearV(card) {
     if (RM()) return 0;
@@ -105,12 +126,21 @@
     setTimeout(function () {
       a.remove();
       b.remove();
-      card.style.visibility = '';
-      card.classList.add('rev');
-      setTimeout(function () { card.classList.remove('rev'); }, 650);
+      gone(card);
     }, 950);
     return 1;
   }
+
+  /* জমা বা ব্যবহার হয়ে যাওয়া ভাউচার আর ভাউচার তালিকায় দেখানো হবে না */
+  var _vcRow = window.vcRow;
+  window.vcRow = function (v) {
+    return CVM[v.id] ? '' : _vcRow(v);
+  };
+  var _vboxH = window.vboxH;
+  window.vboxH = function () {
+    if (VCH && VCH.length && VCH.every(function (v) { return CVM[v.id]; })) return '<div id="vbox"></div>';
+    return _vboxH();
+  };
 
   /* Collect চাপলে */
   window.collectV = async function (id) {
@@ -131,9 +161,9 @@
       var torn = 0;
       document.querySelectorAll('.vkc[data-v="' + id + '"]').forEach(function (b) {
         var c = b.closest('.vk');
-        if (c) torn += tearV(c);
-        b.className = 'vkc c';
-        b.textContent = 'জমা হয়েছে ✓';
+        if (!c) return;
+        if (tearV(c)) torn++;
+        else gone(c);
       });
       if (torn) {
         snd('tear');
