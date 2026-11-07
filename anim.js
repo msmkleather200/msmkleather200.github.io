@@ -1,18 +1,29 @@
-/* M/S, M.K. Leather - ভাউচার অ্যানিমেশন (ভার্সন ২)
-   1) পণ্যের পাতায় Collect চাপলে ভাউচার ফোঁটা ফোঁটা দাগ বরাবর ছিঁড়ে নিচে পড়ে যায়, আর ওই জায়গা থেকে চিরতরে সরে যায়
-   2) অর্ডার পাতায় ভাউচার বাছলে ভাউচার স্ক্রিনের মাঝে এসে নিজে নিজে ছাড়ের ঘরে ঢুকে যায়
+/* M/S, M.K. Leather - অ্যানিমেশন (ভার্সন ৩)
+   1) ভাউচার Collect চাপলে দাগ বরাবর ছিঁড়ে নিচে পড়ে, তারপর একই জায়গায় "জমা হয়েছে" হয়ে ফিরে আসে
+      জমা করা কিন্তু অব্যবহৃত ভাউচার থাকে; অর্ডারে ব্যবহার হয়ে গেলে আর দেখা যায় না
+   2) অর্ডার পাতায় ভাউচার বাছলে ভাউচার স্ক্রিনের মাঝে এসে ছাড়ের ঘরে ঢুকে যায়
+   3) সব নিচের শিট (ভাউচার, কার্ট/কিনুন অপশন) নিচ থেকে স্লাইড করে ওঠে; কার্ট/কিনুন শিট ফুল স্ক্রিন
+   4) কার্টে যোগ করলে পণ্যের ছবি উড়ে কার্ট আইকনে ঢোকে
    শব্দ কোড দিয়েই বানানো (কোনো অডিও ফাইল নেই), সাথে ফোনের ভাইব্রেশন */
 (function () {
   var css = `
-.tp{position:fixed;margin:0!important;z-index:50;pointer-events:none;will-change:transform,opacity}
+.tp{position:fixed;margin:0!important;z-index:90;pointer-events:none;will-change:transform,opacity}
 .tp.l{animation:tpl .95s cubic-bezier(.45,0,.85,.55) forwards}
 .tp.r{animation:tpr .95s cubic-bezier(.45,0,.85,.55) forwards}
 @keyframes tpl{0%{transform:none;opacity:1}22%{transform:translateX(-8px) rotate(-7deg);opacity:1}100%{transform:translate(-26px,300px) rotate(-30deg);opacity:0}}
 @keyframes tpr{0%{transform:none;opacity:1}22%{transform:translateX(8px) rotate(6deg);opacity:1}100%{transform:translate(30px,340px) rotate(26deg);opacity:0}}
-.fly{position:fixed;margin:0!important;z-index:60;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.45);transform-origin:center center}
+.vk.rev{animation:vkin .55s ease both}
+@keyframes vkin{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.fly{position:fixed;margin:0!important;z-index:90;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.45);transform-origin:center center}
+.fly2{position:fixed;margin:0!important;z-index:95;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45);border-radius:10px;overflow:hidden;transform-origin:center center}
 .pulse{display:inline-block;animation:pls .6s ease}
 @keyframes pls{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
-@media(prefers-reduced-motion:reduce){.tp,.fly{display:none}}
+#os{animation:osfd .25s ease both}
+@keyframes osfd{from{background:rgba(0,0,0,0)}to{background:#000a}}
+#os #osb{animation:osup .34s cubic-bezier(.2,.9,.3,1) both}
+@keyframes osup{from{transform:translateY(100%)}to{transform:none}}
+#osb.full{max-width:none;width:100%;height:100%;min-height:100%;max-height:100%;border-radius:0;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+@media(prefers-reduced-motion:reduce){.tp,.fly,.fly2{display:none}#os,#os #osb{animation:none}}
 `;
   var st = document.createElement('style');
   st.textContent = css;
@@ -76,29 +87,6 @@
     } catch (e) {}
   }
 
-  /* ===== ছেঁড়ার পর কার্ড তালিকা থেকে সরিয়ে ফেলা ===== */
-  function gone(card) {
-    var par = card.parentNode;
-    var horiz = !!(par && par.classList && par.classList.contains('vsc'));
-    var r = card.getBoundingClientRect();
-    function done() {
-      var box = card.closest ? card.closest('.vbx') : null;
-      card.remove();
-      if (box && !box.querySelector('.vk')) box.remove();
-    }
-    if (RM() || !card.animate || !r.width || !r.height) {
-      done();
-      return;
-    }
-    card.style.visibility = 'hidden';
-    card.style.overflow = 'hidden';
-    var kf = horiz
-      ? [{ width: r.width + 'px', marginRight: '0px' }, { width: '0px', marginRight: '-10px' }]
-      : [{ height: r.height + 'px', marginBottom: '12px' }, { height: '0px', marginBottom: '0px' }];
-    var an = card.animate(kf, { duration: 280, easing: 'ease', fill: 'forwards' });
-    an.onfinish = done;
-  }
-
   /* ===== ভাউচার ছেঁড়া ===== */
   function tearV(card) {
     if (RM()) return 0;
@@ -126,19 +114,23 @@
     setTimeout(function () {
       a.remove();
       b.remove();
-      gone(card);
+      card.style.visibility = '';
+      card.classList.add('rev');
+      setTimeout(function () { card.classList.remove('rev'); }, 650);
     }, 950);
     return 1;
   }
 
-  /* জমা বা ব্যবহার হয়ে যাওয়া ভাউচার আর ভাউচার তালিকায় দেখানো হবে না */
+  /* অর্ডারে ব্যবহার হয়ে যাওয়া ভাউচার আর তালিকায় দেখানো হবে না।
+     জমা করা (অব্যবহৃত) আর জমা না-করা, দুটোই থাকবে */
+  function usedV(v) { return !!(CVM[v.id] && CVM[v.id].used); }
   var _vcRow = window.vcRow;
   window.vcRow = function (v) {
-    return CVM[v.id] ? '' : _vcRow(v);
+    return usedV(v) ? '' : _vcRow(v);
   };
   var _vboxH = window.vboxH;
   window.vboxH = function () {
-    if (VCH && VCH.length && VCH.every(function (v) { return CVM[v.id]; })) return '<div id="vbox"></div>';
+    if (VCH && VCH.length && VCH.every(usedV)) return '<div id="vbox"></div>';
     return _vboxH();
   };
 
@@ -161,9 +153,9 @@
       var torn = 0;
       document.querySelectorAll('.vkc[data-v="' + id + '"]').forEach(function (b) {
         var c = b.closest('.vk');
-        if (!c) return;
-        if (tearV(c)) torn++;
-        else gone(c);
+        if (c && tearV(c)) torn++;
+        b.className = 'vkc c';
+        b.textContent = 'জমা হয়েছে ✓';
       });
       if (torn) {
         snd('tear');
@@ -223,5 +215,68 @@
         };
       }, 550);
     };
+  };
+
+  /* ===== কার্ট / এখনই কিনুন শিট: ফুল স্ক্রিনে স্লাইড করে ওঠে ===== */
+  var _optR = window.optR;
+  window.optR = function () {
+    _optR();
+    var b = document.getElementById('osb');
+    if (b) b.classList.add('full');
+  };
+
+  /* ===== কার্টে যোগ করলে পণ্যের ছবি উড়ে কার্ট আইকনে ঢোকে ===== */
+  function cartTarget() {
+    return document.querySelector('#mb .pbar button[aria-label="কার্ট"]') ||
+      document.querySelector('nav a[onclick*="cartM"]');
+  }
+  function flyToCart(r, node, tgt) {
+    var t = tgt.getBoundingClientRect();
+    var f = node;
+    f.className = 'th fly2';
+    Object.assign(f.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+    document.body.appendChild(f);
+    var bx = r.left + r.width / 2, by = r.top + r.height / 2;
+    var dx = t.left + t.width / 2 - bx, dy = t.top + t.height / 2 - by;
+    var endS = Math.max(0.12, 26 / Math.max(r.width, 1));
+    var an = f.animate([
+      { transform: 'translate(0px,0px) scale(1)', opacity: 1 },
+      { transform: 'translate(' + (dx * 0.45) + 'px,' + (dy * 0.45 - 70) + 'px) scale(' + Math.max(0.5, endS * 2.2) + ')', opacity: 1, offset: 0.55 },
+      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + endS + ')', opacity: 0.35 }
+    ], { duration: 760, easing: 'cubic-bezier(.5,0,.75,.6)', fill: 'forwards' });
+    an.onfinish = function () {
+      f.remove();
+      ui();
+      snd('ding');
+      vib([18, 35, 18]);
+      try {
+        tgt.animate([
+          { transform: 'scale(1)' }, { transform: 'scale(1.35) rotate(-8deg)' },
+          { transform: 'scale(.92)' }, { transform: 'scale(1)' }
+        ], { duration: 480, easing: 'ease-out' });
+        var bd = tgt.querySelector('.pcn') || tgt.querySelector('.bd');
+        if (bd) bd.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.6)' }, { transform: 'scale(1)' }], { duration: 420 });
+      } catch (e) {}
+    };
+  }
+
+  var _optGo = window.optGo;
+  window.optGo = function () {
+    if (om === 'buy' || RM()) return _optGo();
+    ac();
+    var th = document.querySelector('#osb .oh .th');
+    var r = th ? th.getBoundingClientRect() : null;
+    var node = th ? th.cloneNode(true) : null;
+    var tgt = cartTarget();
+    if (!r || !node || !tgt || !tgt.getBoundingClientRect().width) return _optGo();
+    /* কার্টে যোগ করা (মূল কোডের মতোই), শুধু সংখ্যা বদলানো উড়ে পৌঁছানোর পর */
+    var i = item(), f = cart.find(function (a) { return a.id == i.id && a.col == i.col && a.sz == i.sz; });
+    if (f) f.qty += i.qty; else cart.push(i);
+    try { localStorage.setItem('mkcart', JSON.stringify(cart)); } catch (e) {}
+    optX();
+    toast('কার্টে যোগ হয়েছে ✓');
+    snd('pop');
+    vib(25);
+    flyToCart(r, node, tgt);
   };
 })();
