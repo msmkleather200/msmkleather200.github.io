@@ -1,9 +1,12 @@
-/* M/S, M.K. Leather - অ্যানিমেশন (ভার্সন ৩)
-   1) ভাউচার Collect চাপলে দাগ বরাবর ছিঁড়ে নিচে পড়ে, তারপর একই জায়গায় "জমা হয়েছে" হয়ে ফিরে আসে
-      জমা করা কিন্তু অব্যবহৃত ভাউচার থাকে; অর্ডারে ব্যবহার হয়ে গেলে আর দেখা যায় না
-   2) অর্ডার পাতায় ভাউচার বাছলে ভাউচার স্ক্রিনের মাঝে এসে ছাড়ের ঘরে ঢুকে যায়
-   3) সব নিচের শিট (ভাউচার, কার্ট/কিনুন অপশন) নিচ থেকে স্লাইড করে ওঠে; কার্ট/কিনুন শিট ফুল স্ক্রিন
-   4) কার্টে যোগ করলে পণ্যের ছবি উড়ে কার্ট আইকনে ঢোকে
+/* M/S, M.K. Leather - অ্যানিমেশন (ভার্সন ৪)
+   ভাউচার:
+   - পণ্যের পাতার ভাউচার Collect করলে দাগ বরাবর ছিঁড়ে নিচে পড়ে যায় আর ওই পাতা থেকে সরে যায় (জমা হয়ে "আমার ভাউচারে" যোগ হয়)
+   - "আমার ভাউচার" শিটে থাকে: জমা করা কিন্তু অব্যবহৃত + এখনো জমা না-করা। অর্ডারে ব্যবহার হয়ে গেলে আর দেখা যায় না
+   - "আমার ভাউচার" শিটে Collect করলে ছিঁড়ে নিচে পড়ে, তারপর একই জায়গায় "জমা হয়েছে ✓" হয়ে ফিরে আসে
+   - অর্ডার পাতায় ভাউচার বাছলে ভাউচার স্ক্রিনের মাঝে এসে ছাড়ের ঘরে ঢুকে যায়
+   শিট ও কার্ট:
+   - সব নিচের শিট নিচ থেকে স্লাইড করে ওঠে; কার্ট/কিনুন শিট ফুল স্ক্রিন
+   - কার্টে যোগ করলে পণ্যের ছবি স্ক্রিনের মাঝখানে ভেসে উঠে ওপরের কার্ট আইকনে উড়ে ঢোকে
    শব্দ কোড দিয়েই বানানো (কোনো অডিও ফাইল নেই), সাথে ফোনের ভাইব্রেশন */
 (function () {
   var css = `
@@ -15,15 +18,14 @@
 .vk.rev{animation:vkin .55s ease both}
 @keyframes vkin{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 .fly{position:fixed;margin:0!important;z-index:90;pointer-events:none;box-shadow:0 16px 40px rgba(0,0,0,.45);transform-origin:center center}
-.fly2{position:fixed;margin:0!important;z-index:95;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.45);border-radius:10px;overflow:hidden;transform-origin:center center}
+.fly2{position:fixed;margin:0!important;z-index:95;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);border-radius:14px;overflow:hidden;transform-origin:center center;will-change:transform,opacity}
+.fly2 img,.fly2 svg{width:100%;height:100%;object-fit:cover;display:block}
 .pulse{display:inline-block;animation:pls .6s ease}
 @keyframes pls{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
-#os{animation:osfd .25s ease both}
-@keyframes osfd{from{background:rgba(0,0,0,0)}to{background:#000a}}
 #os #osb{animation:osup .34s cubic-bezier(.2,.9,.3,1) both}
 @keyframes osup{from{transform:translateY(100%)}to{transform:none}}
 #osb.full{max-width:none;width:100%;height:100%;min-height:100%;max-height:100%;border-radius:0;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-@media(prefers-reduced-motion:reduce){.tp,.fly,.fly2{display:none}#os,#os #osb{animation:none}}
+@media(prefers-reduced-motion:reduce){.tp,.fly,.fly2{display:none}#os #osb{animation:none}}
 `;
   var st = document.createElement('style');
   st.textContent = css;
@@ -87,8 +89,56 @@
     } catch (e) {}
   }
 
-  /* ===== ভাউচার ছেঁড়া ===== */
-  function tearV(card) {
+  /* ===== ভাউচার তালিকার নিয়ম =====
+     পণ্যের পাতা ও ভাউচার পাতা : শুধু এখনো জমা না-করা ভাউচার
+     "আমার ভাউচার" শিট        : জমা না-করা + জমা করা (অব্যবহৃত); ব্যবহৃত বাদ */
+  function usedV(v) { return !!(CVM[v.id] && CVM[v.id].used); }
+  function withList(fn, keep) {
+    if (!VCH) return fn();
+    var saved = VCH;
+    VCH = saved.filter(keep);
+    try { return fn(); } finally { VCH = saved; }
+  }
+  var _vboxH = window.vboxH, _vpageM = window.vpageM, _vchM = window.vchM;
+  window.vboxH = function () {
+    return withList(_vboxH, function (v) { return !CVM[v.id]; });
+  };
+  window.vpageM = function () {
+    return withList(_vpageM, function (v) { return !CVM[v.id]; });
+  };
+  window.vchM = function () {
+    withList(_vchM, function (v) { return !usedV(v); });
+  };
+
+  /* ===== কার্ড ধীরে গুটিয়ে সরিয়ে ফেলা (পণ্যের পাতা থেকে) ===== */
+  function gone(card) {
+    var par = card.parentNode;
+    var horiz = !!(par && par.classList && par.classList.contains('vsc'));
+    var r = card.getBoundingClientRect();
+    function done() {
+      var box = card.closest ? card.closest('.vbx') : null;
+      var pg = par && par.classList && par.classList.contains('vpg') ? par : null;
+      card.remove();
+      if (box && !box.querySelector('.vk')) box.remove();
+      if (pg && !pg.querySelector('.vk')) pg.innerHTML = '<p style="padding:14px 0">এখন কোনো ভাউচার নেই।</p>';
+    }
+    if (RM() || !card.animate || !r.width || !r.height) {
+      done();
+      return;
+    }
+    card.style.visibility = 'hidden';
+    card.style.overflow = 'hidden';
+    var kf = horiz
+      ? [{ maxWidth: r.width + 'px', marginRight: '10px' }, { maxWidth: '0px', marginRight: '0px' }]
+      : [{ maxHeight: r.height + 'px', marginBottom: '12px' }, { maxHeight: '0px', marginBottom: '0px' }];
+    var an = card.animate(kf, { duration: 300, easing: 'ease', fill: 'forwards' });
+    an.onfinish = done;
+  }
+
+  /* ===== ভাউচার ছেঁড়া =====
+     mode 'gone' : ছিঁড়ে পড়ে যায়, জায়গা থেকে সরে যায়
+     mode 'stay' : ছিঁড়ে পড়ে যায়, তারপর একই জায়গায় ফিরে আসে */
+  function tearV(card, mode) {
     if (RM()) return 0;
     var r = card.getBoundingClientRect();
     if (!r.width || !r.height) return 0;
@@ -114,25 +164,16 @@
     setTimeout(function () {
       a.remove();
       b.remove();
-      card.style.visibility = '';
-      card.classList.add('rev');
-      setTimeout(function () { card.classList.remove('rev'); }, 650);
+      if (mode === 'gone') {
+        gone(card);
+      } else {
+        card.style.visibility = '';
+        card.classList.add('rev');
+        setTimeout(function () { card.classList.remove('rev'); }, 650);
+      }
     }, 950);
     return 1;
   }
-
-  /* অর্ডারে ব্যবহার হয়ে যাওয়া ভাউচার আর তালিকায় দেখানো হবে না।
-     জমা করা (অব্যবহৃত) আর জমা না-করা, দুটোই থাকবে */
-  function usedV(v) { return !!(CVM[v.id] && CVM[v.id].used); }
-  var _vcRow = window.vcRow;
-  window.vcRow = function (v) {
-    return usedV(v) ? '' : _vcRow(v);
-  };
-  var _vboxH = window.vboxH;
-  window.vboxH = function () {
-    if (VCH && VCH.length && VCH.every(usedV)) return '<div id="vbox"></div>';
-    return _vboxH();
-  };
 
   /* Collect চাপলে */
   window.collectV = async function (id) {
@@ -153,9 +194,12 @@
       var torn = 0;
       document.querySelectorAll('.vkc[data-v="' + id + '"]').forEach(function (b) {
         var c = b.closest('.vk');
-        if (c && tearV(c)) torn++;
+        if (!c) return;
+        var inSheet = !!c.closest('#osb');
         b.className = 'vkc c';
         b.textContent = 'জমা হয়েছে ✓';
+        if (tearV(c, inSheet ? 'stay' : 'gone')) torn++;
+        else if (!inSheet) gone(c);
       });
       if (torn) {
         snd('tear');
@@ -225,27 +269,37 @@
     if (b) b.classList.add('full');
   };
 
-  /* ===== কার্টে যোগ করলে পণ্যের ছবি উড়ে কার্ট আইকনে ঢোকে ===== */
+  /* ===== কার্টে যোগ করলে পণ্যের ছবি মাঝখান থেকে উড়ে কার্ট আইকনে ঢোকে ===== */
   function cartTarget() {
-    return document.querySelector('#mb .pbar button[aria-label="কার্ট"]') ||
-      document.querySelector('nav a[onclick*="cartM"]');
+    var c = document.querySelectorAll('.pbar button[aria-label="কার্ট"]'), i, r;
+    for (i = 0; i < c.length; i++) {
+      r = c[i].getBoundingClientRect();
+      if (r.width && r.bottom > 0 && r.top < innerHeight) return c[i];
+    }
+    var n = document.getElementById('cn'), a = n && n.parentNode;
+    if (a) {
+      r = a.getBoundingClientRect();
+      if (r.width && r.top < innerHeight) return a;
+    }
+    return null;
   }
-  function flyToCart(r, node, tgt) {
+  function flyToCart(node, tgt) {
+    var S = Math.min(150, Math.round(innerWidth * 0.4)), cx = innerWidth / 2, cy = innerHeight / 2;
     var t = tgt.getBoundingClientRect();
-    var f = node;
-    f.className = 'th fly2';
-    Object.assign(f.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
-    document.body.appendChild(f);
-    var bx = r.left + r.width / 2, by = r.top + r.height / 2;
-    var dx = t.left + t.width / 2 - bx, dy = t.top + t.height / 2 - by;
-    var endS = Math.max(0.12, 26 / Math.max(r.width, 1));
-    var an = f.animate([
-      { transform: 'translate(0px,0px) scale(1)', opacity: 1 },
-      { transform: 'translate(' + (dx * 0.45) + 'px,' + (dy * 0.45 - 70) + 'px) scale(' + Math.max(0.5, endS * 2.2) + ')', opacity: 1, offset: 0.55 },
-      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + endS + ')', opacity: 0.35 }
-    ], { duration: 760, easing: 'cubic-bezier(.5,0,.75,.6)', fill: 'forwards' });
+    var dx = t.left + t.width / 2 - cx, dy = t.top + t.height / 2 - cy;
+    var endS = Math.max(0.1, 24 / S);
+    node.className = 'th fly2';
+    Object.assign(node.style, { left: (cx - S / 2) + 'px', top: (cy - S / 2) + 'px', width: S + 'px', height: S + 'px' });
+    document.body.appendChild(node);
+    var an = node.animate([
+      { transform: 'translate(0px,0px) scale(.35)', opacity: 0, offset: 0, easing: 'cubic-bezier(.2,.9,.3,1.2)' },
+      { transform: 'translate(0px,0px) scale(1)', opacity: 1, offset: 0.24 },
+      { transform: 'translate(0px,0px) scale(1)', opacity: 1, offset: 0.4, easing: 'cubic-bezier(.55,0,.8,.45)' },
+      { transform: 'translate(' + (dx * 0.85) + 'px,' + (dy * 0.85) + 'px) scale(' + (endS * 2.4) + ')', opacity: 1, offset: 0.9 },
+      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + endS + ')', opacity: 0.2, offset: 1 }
+    ], { duration: 1100, fill: 'forwards' });
     an.onfinish = function () {
-      f.remove();
+      node.remove();
       ui();
       snd('ding');
       vib([18, 35, 18]);
@@ -263,13 +317,12 @@
   var _optGo = window.optGo;
   window.optGo = function () {
     if (om === 'buy' || RM()) return _optGo();
-    ac();
     var th = document.querySelector('#osb .oh .th');
-    var r = th ? th.getBoundingClientRect() : null;
-    var node = th ? th.cloneNode(true) : null;
     var tgt = cartTarget();
-    if (!r || !node || !tgt || !tgt.getBoundingClientRect().width) return _optGo();
-    /* কার্টে যোগ করা (মূল কোডের মতোই), শুধু সংখ্যা বদলানো উড়ে পৌঁছানোর পর */
+    if (!th || !tgt) return _optGo();
+    ac();
+    var node = th.cloneNode(true);
+    /* কার্টে যোগ করা (মূল কোডের মতোই); শুধু সংখ্যা বদলায় ছবি পৌঁছানোর পর */
     var i = item(), f = cart.find(function (a) { return a.id == i.id && a.col == i.col && a.sz == i.sz; });
     if (f) f.qty += i.qty; else cart.push(i);
     try { localStorage.setItem('mkcart', JSON.stringify(cart)); } catch (e) {}
@@ -277,6 +330,6 @@
     toast('কার্টে যোগ হয়েছে ✓');
     snd('pop');
     vib(25);
-    flyToCart(r, node, tgt);
+    flyToCart(node, tgt);
   };
 })();
