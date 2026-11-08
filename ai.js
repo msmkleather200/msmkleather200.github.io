@@ -1,11 +1,39 @@
 /* M/S, M.K. Leather: AI chat reply (index.html এর চ্যাটে বসে) */
 (function () {
+  /* লিংককে ক্লিকযোগ্য বানায় (আগে HTML escape করে, তাই নিরাপদ) */
   function linkify(s) {
     var e = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return e.replace(/(https?:\/\/[^\s<।]+)/g,
-      '<a href="$1" target="_blank" rel="noopener" style="color:#1a73e8;text-decoration:underline;word-break:break-all">$1</a>');
+      '<a href="$1" target="_blank" rel="noopener" style="color:#1a73e8;-webkit-text-fill-color:#1a73e8;text-decoration:underline;word-break:break-all">$1</a>');
   }
   window.linkify = linkify;
+
+  /* চ্যাটের উত্তরের ভেতরের সাধারণ লেখা লিংক বদলে ক্লিকযোগ্য করে (index.html বদলাতে হয় না) */
+  function linkifyBubble(root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var list = [], n;
+    while ((n = w.nextNode())) {
+      if (/https?:\/\//.test(n.nodeValue) && !(n.parentNode && n.parentNode.closest && n.parentNode.closest('a'))) {
+        list.push(n);
+      }
+    }
+    list.forEach(function (t) {
+      var sp = document.createElement('span');
+      sp.innerHTML = linkify(t.nodeValue);
+      t.parentNode.replaceChild(sp, t);
+    });
+  }
+  function scan() {
+    var els = document.querySelectorAll('#cl .ba, #ait');
+    for (var i = 0; i < els.length; i++) linkifyBubble(els[i]);
+  }
+  function startWatch() {
+    var mb = document.getElementById('mb');
+    if (!mb || !window.MutationObserver) return;
+    new MutationObserver(scan).observe(mb, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startWatch);
+  else startWatch();
 
   var WORKER_URL = 'https://muddy-flower-d91b.msmkleather200.workers.dev';
   var busy = false;
