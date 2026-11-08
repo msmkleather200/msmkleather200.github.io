@@ -1,13 +1,13 @@
 {
   "name": "M/S, M.K. Leather",
-  "short_name": "M.K. Leather",
+  "short_name": "MS MK Leather",
   "description": "প্রিমিয়াম লেদার মানিব্যাগ, জুতা, ব্যাগ ও বেল্ট",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "bn",
-  "background_color": "#0a0a0a",
+  "background_color": "#000000",
   "theme_color": "#0a0a0a",
   "icons": [
     {
