@@ -560,6 +560,7 @@ try{const ref=db.collection('orders').doc(),bt=db.batch();
 bt.set(ref,{uid:user.uid,email:user.email,name:v('cn1'),phone:v('cp'),district:v('cd'),area:v('cu'),address:v('ca'),items:it,subtotal:sub,delivery:dc,discount:vd,voucher:vo,total:sub+dc-vd,payment:'cod',status:'নতুন',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
 if(selV)bt.update(db.collection('users').doc(user.uid).collection('cv').doc(selV.id),{used:true,usedAt:firebase.firestore.FieldValue.serverTimestamp(),oid:ref.id});
 await bt.commit();const r=ref;
+try{fetch('https://muddy-flower-d91b.msmkleather200.workers.dev/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:ref.id}),keepalive:true}).catch(()=>{})}catch(_){}
 if(selV&&CVM[selV.id])CVM[selV.id].used=true;selV=null;
 if(window._fc){cart=[];save()}
 it.forEach(i=>{try{db.collection('products').doc(String(i.id)).update({sold:firebase.firestore.FieldValue.increment(i.qty)}).catch(()=>{})}catch(_){}});
