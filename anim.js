@@ -31,6 +31,63 @@
   st.textContent = css;
   document.head.appendChild(st);
 
+  /* ===== স্প্ল্যাশ: অ্যাপ খুললে ফোনের স্প্ল্যাশের মতোই লোগো মাঝখানে থাকে, তারপর ১১% ওপরে ওঠে,
+     নিচে "MS MK Leather" অক্ষর অক্ষর করে ফোটে, সোনালি ঝিলিক ও দাগ আসে, শেষে বাঁ দিকে ফেড আউট হয়ে অ্যাপে ঢোকে
+     SPLASH_ONLY_APP = true  : শুধু ইনস্টল করা অ্যাপ খুললে দেখাবে
+     SPLASH_ONLY_APP = false : ব্রাউজারে ঢুকলেও সবাই দেখবে
+     স্ক্রিনে চাপ দিলে স্প্ল্যাশ সাথে সাথে বন্ধ হয় */
+  var SPLASH_ONLY_APP = true;
+  var SPLASH_TEXT = 'MS MK Leather';
+  var SPLASH_RISE = '11vh';
+  (function () {
+    try {
+      var app = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+      if (SPLASH_ONLY_APP && !app) return;
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      if (sessionStorage.getItem('mksplash')) return;
+      sessionStorage.setItem('mksplash', '1');
+    } catch (e) {}
+    var sc = document.createElement('style');
+    sc.textContent = `
+#splash{position:fixed;inset:0;z-index:9999;background:#000;overflow:hidden;--s:min(62vw,300px);--rise:` + SPLASH_RISE + `}
+#splash .sg{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);animation:sprise .9s .45s cubic-bezier(.45,.05,.2,1) both}
+#splash .sg::after{content:"";position:absolute;inset:-28%;mix-blend-mode:screen;pointer-events:none;background:radial-gradient(circle,rgba(243,201,74,.30),rgba(243,201,74,0) 62%);opacity:0;animation:spglow 2.4s .5s ease-out both}
+#splash .sg img{position:relative;width:100%;height:100%;object-fit:contain;display:block}
+#splash .st{position:absolute;left:0;right:0;top:calc(50% + var(--s) / 2 - var(--rise) + 10px);text-align:center;animation:spshine 1s 2s ease-in-out both}
+#splash .sw{font-family:Georgia,"Times New Roman",serif;font-size:clamp(26px,8.4vw,38px);font-weight:700;letter-spacing:.12em;white-space:nowrap}
+#splash .sw i{font-style:normal;display:inline-block;background:linear-gradient(180deg,#fff3b8 0%,#f3c94a 45%,#b8860b 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;opacity:0;transform:translateY(16px) scale(.8);filter:blur(6px);animation:spl .6s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:calc(1.05s + var(--i) * .055s)}
+#splash .sl{width:0;height:2px;margin:14px auto 0;border-radius:2px;background:linear-gradient(90deg,rgba(212,160,23,0),#f3c94a,rgba(212,160,23,0));animation:spline .8s 1.85s cubic-bezier(.2,.9,.3,1) both}
+@keyframes sprise{from{transform:translateY(0)}to{transform:translateY(calc(var(--rise) * -1))}}
+@keyframes spglow{0%{opacity:0;transform:scale(.7)}40%{opacity:1}100%{opacity:.55;transform:scale(1)}}
+@keyframes spl{from{opacity:0;transform:translateY(16px) scale(.8);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes spline{from{width:0;opacity:0}to{width:min(46vw,190px);opacity:1}}
+@keyframes spshine{0%,100%{filter:brightness(1)}50%{filter:brightness(1.55) drop-shadow(0 0 8px rgba(243,201,74,.65))}}
+#splash.out{-webkit-animation:fade-out-left .6s cubic-bezier(.25,.46,.45,.94) both;animation:fade-out-left .6s cubic-bezier(.25,.46,.45,.94) both}
+@-webkit-keyframes fade-out-left{0%{-webkit-transform:translateX(0);transform:translateX(0);opacity:1}100%{-webkit-transform:translateX(-50px);transform:translateX(-50px);opacity:0}}
+@keyframes fade-out-left{0%{-webkit-transform:translateX(0);transform:translateX(0);opacity:1}100%{-webkit-transform:translateX(-50px);transform:translateX(-50px);opacity:0}}
+`;
+    document.head.appendChild(sc);
+    var letters = '';
+    for (var k = 0; k < SPLASH_TEXT.length; k++) {
+      var ch = SPLASH_TEXT.charAt(k);
+      letters += '<i style="--i:' + k + '">' + (ch === ' ' ? '&nbsp;' : ch) + '</i>';
+    }
+    var sp = document.createElement('div');
+    sp.id = 'splash';
+    sp.innerHTML = '<div class="sg"><img src="icon-512.png" alt=""></div><div class="st"><div class="sw">' + letters + '</div><div class="sl"></div></div>';
+    document.documentElement.appendChild(sp);
+    var closed = false;
+    function out() {
+      if (closed) return;
+      closed = true;
+      sp.classList.add('out');
+      sp.addEventListener('animationend', function (e) { if (e.target === sp) sp.remove(); });
+      setTimeout(function () { sp.remove(); }, 1000);
+    }
+    sp.addEventListener('click', out);
+    setTimeout(out, 3000);
+  })();
+
   function RM() {
     return window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
   }
