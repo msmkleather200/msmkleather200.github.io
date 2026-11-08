@@ -1,5 +1,12 @@
 /* M/S, M.K. Leather: AI chat reply (index.html এর চ্যাটে বসে) */
 (function () {
+  function linkify(s) {
+    var e = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return e.replace(/(https?:\/\/[^\s<।]+)/g,
+      '<a href="$1" target="_blank" rel="noopener" style="color:#1a73e8;text-decoration:underline;word-break:break-all">$1</a>');
+  }
+  window.linkify = linkify;
+
   var WORKER_URL = 'https://muddy-flower-d91b.msmkleather200.workers.dev';
   var busy = false;
   var CN = { wallet: 'মানিব্যাগ', shoe: 'জুতা', bag: 'ব্যাগ', belt: 'বেল্ট' };
@@ -98,7 +105,7 @@
       if (typing) typing.remove();
     } catch (e) {
       // Firebase নিয়মে সেভ না হলে অন্তত স্ক্রিনে দেখাবে
-      if (typing) typing.textContent = reply;
+      if (typing) typing.innerHTML = linkify(reply);
     }
     busy = false;
     var mb = $('#mb');
