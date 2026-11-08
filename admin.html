@@ -2,6 +2,13 @@
 <html lang="bn"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>অ্যাডমিন | M/S, M.K. Leather</title>
+<link rel="manifest" href="admin-manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MK অ্যাডমিন">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans Bengali",system-ui,sans-serif;background:#f5f3f0;color:#222}
@@ -38,44 +45,85 @@ input[type=checkbox]{width:auto}
 .tgb button{border:0;background:#c00;color:#fff;width:22px;height:22px;border-radius:50%;font-size:14px;line-height:1;padding:0;cursor:pointer}
 .tg input.tgi{flex:1;min-width:90px;width:auto;border:0;padding:8px 4px;outline:0}
 .tgw>.b{white-space:nowrap;height:46px}
+
+/* ===== হেডার বাটন, ব্যাজ, টোস্ট ===== */
+.hb{display:flex;gap:6px;align-items:center}
+#ib,#nb{font-size:12px;padding:5px 9px}
+.nb{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:10px;background:#e11;color:#fff;font-size:11px;line-height:1.5;animation:pls 1.4s ease-in-out infinite}
+#nt{display:none;position:fixed;left:10px;right:10px;top:10px;z-index:30;max-width:560px;margin:0 auto;background:linear-gradient(#1c1308,#000);color:#f3c94a;border:2px solid #d4a017;border-radius:16px;padding:12px 14px;box-shadow:0 0 22px rgba(243,201,74,.55);align-items:center;gap:10px;justify-content:space-between;font-size:14px}
+#nt button{background:#d4a017;color:#000;border:0;border-radius:8px;padding:8px 14px;font-weight:700;font-family:inherit}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* ===== প্রিমিয়াম অর্ডার কার্ড ===== */
+.oc{--sc:#8a6a1f;position:relative;background:linear-gradient(#fff,#fffaf0);border:1.5px solid #e2cd94;border-left:6px solid var(--sc);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 4px 14px rgba(138,90,11,.14);font-size:14px;line-height:1.55;overflow:hidden}
+.oc[data-s="0"]{--sc:#d4a017}.oc[data-s="1"]{--sc:#2b6cb0}.oc[data-s="2"]{--sc:#e07b00}.oc[data-s="3"]{--sc:#7b3fb0}.oc[data-s="4"]{--sc:#1aa13a}.oc[data-s="5"]{--sc:#b3261e}
+.oc.new{border-color:#d4a017;box-shadow:0 0 0 2px rgba(243,201,74,.55),0 6px 22px rgba(212,160,23,.45);animation:gl 2.4s ease-in-out infinite alternate}
+.oc.new::after{content:"";position:absolute;top:0;bottom:0;width:30%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,236,170,.55),transparent);animation:sw 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes gl{from{box-shadow:0 0 0 2px rgba(243,201,74,.35),0 4px 14px rgba(212,160,23,.25)}to{box-shadow:0 0 0 2px rgba(243,201,74,.8),0 6px 26px rgba(212,160,23,.6)}}
+@keyframes sw{to{left:130%}}
+.oh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.oh b.oid{font-size:17px;letter-spacing:.5px;color:#1a1208}
+.oh small{display:block;color:#7a6a4a}
+.st{background:var(--sc);color:#fff;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:700;white-space:nowrap}
+.ocu{display:flex;align-items:center;gap:12px;background:#1a1208;border-radius:14px;padding:10px 12px;color:#fff}
+.av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f3c94a,#a8740f);color:#1a1000;font:800 19px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+.ui{flex:1;min-width:0}.ui b{display:block;color:#f3c94a;font-size:15px;word-break:break-word}.ui small{color:#e8d9b5;word-break:break-all}
+.ca{display:flex;gap:8px;flex:none}
+.cb{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:19px}
+.cb.c1{background:#d4a017}.cb.c2{background:#25d366}
+.adr{margin:10px 2px 6px;color:#3a2a10}
+.its{background:#f7f1e3;border:1px solid #eadfc8;border-radius:12px;padding:6px 10px;margin:8px 0}
+.ir{display:flex;align-items:center;gap:10px;padding:6px 0}
+.ir+.ir{border-top:1px dashed #dcc98f}
+.tot{background:linear-gradient(#050505,#2a1a08);border:1.5px solid #d4a017;border-radius:14px;padding:8px 14px;color:#e8d9b5;font-size:13px}
+.tr{display:flex;justify-content:space-between;padding:2px 0}
+.tr.gt{border-top:1px solid rgba(243,201,74,.4);margin-top:4px;padding-top:6px;color:#f3c94a;font-size:16px}
+.oc .bt .ok{background:linear-gradient(135deg,#f3c94a,#d4a017);border:0}
+.oc .bt button,.oc .bt select{border-radius:10px;padding:9px 13px}
+@media(prefers-reduced-motion:reduce){.oc.new,.oc.new::after,.nb{animation:none}}
 </style></head><body>
-<header><b>M/S, M.K. Leather · অ্যাডমিন</b><button id="lo" style="display:none" onclick="auth.signOut()">লগআউট</button></header>
+<header><b>M/S, M.K. Leather · অ্যাডমিন</b><span class="hb"><button id="ib" style="display:none">📲 ইনস্টল</button><button id="nb" style="display:none"></button><button id="lo" style="display:none" onclick="auth.signOut()">লগআউট</button></span></header>
+<div id="nt"></div>
 <main id="app"></main>
 <div id="ov" onclick="if(event.target==this)closeM()"><div id="mb"></div></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
 const FC={apiKey:"AIzaSyBmnEuKvp9igYBD02K7WjwAvcOjQ_yk1pg",authDomain:"msmklearther.firebaseapp.com",projectId:"msmklearther",storageBucket:"msmklearther.firebasestorage.app",messagingSenderId:"573825703414",appId:"1:573825703414:web:dc33c890e3feca331fbbd7",measurementId:"G-W13VT18VZ5"};
 const ADMINS=['msmkleather200@gmail.com'];
+/* Firebase Console > Project settings > Cloud Messaging > Web Push certificates > Key pair: সেই লম্বা কী এখানে বসান */
+const VAPID='';
 const $=s=>document.querySelector(s),g=i=>$('#'+i).value.trim();
 const E=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
 const S=['নতুন','কনফার্মড','প্রস্তুত হচ্ছে','পাঠানো হয়েছে','ডেলিভারি সম্পন্ন','বাতিল'],CT={wallet:'মানিব্যাগ',shoe:'জুতা',bag:'ব্যাগ',belt:'বেল্ট'};
 firebase.initializeApp(FC);const auth=firebase.auth(),db=firebase.firestore();
-let un,OR=[],PR=[],flt='সব',IMS=[],PM={};
+let un,OR=[],PR=[],flt='সব',IMS=[],PM={},ow=null,owInit=false,SWR=null,dip=null;
 const A=$('#app');
 let cun=null;function M(h){$('#mb').innerHTML=h;$('#ov').style.display='flex'}function closeM(){cun&&cun();cun=null;$('#ov').style.display='none'}
-auth.onAuthStateChanged(u=>{un&&un();$('#lo').style.display=u?'block':'none';
+auth.onAuthStateChanged(u=>{un&&un();ow&&ow();ow=null;$('#lo').style.display=u?'block':'none';
  if(!u)A.innerHTML='<div class="mid"><p style="margin-bottom:14px">অ্যাডমিন হিসেবে গুগল দিয়ে লগইন করুন।</p><button class="b g" onclick="auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>alert(e.message))">গুগল দিয়ে লগইন</button></div>';
  else if(!ADMINS.includes(u.email))A.innerHTML=`<div class="mid"><p><b>${E(u.email)}</b> অ্যাডমিন তালিকায় নেই। সঠিক গুগল অ্যাকাউন্ট দিয়ে লগইন করুন।</p></div>`;
  else shell()});
-function shell(){A.innerHTML='<div class="tabs"><button id="t1" onclick="tab(1)">অর্ডার</button><button id="t2" onclick="tab(2)">পণ্য</button><button id="t3" onclick="tab(3)">সাইট সেটিংস</button><button id="t4" onclick="tab(4)">চ্যাট</button><button id="t5" onclick="tab(5)">ভাউচার</button></div><div id="v"></div>';tab(1)}
+function shell(){A.innerHTML='<div class="tabs"><button id="t1" onclick="tab(1)">অর্ডার</button><button id="t2" onclick="tab(2)">পণ্য</button><button id="t3" onclick="tab(3)">সাইট সেটিংস</button><button id="t4" onclick="tab(4)">চ্যাট</button><button id="t5" onclick="tab(5)">ভাউচার</button></div><div id="v"></div>';tab(1);watchOrders();initPush()}
 function tab(n){un&&un();[1,2,3,4,5].forEach(i=>$('#t'+i).className=i==n?'on':'');[0,orders,prods,sets,chats,vouchers][n]()}
 
 /* অর্ডার */
 function orders(){$('#v').innerHTML='<div class="chips" id="fl"></div><div id="ol"></div>';db.collection('products').get().then(s=>{s.docs.forEach(d=>PM[d.id]=d.data().img||'');drawO()}).catch(()=>{});
 un=db.collection('orders').orderBy('createdAt','desc').onSnapshot(s=>{OR=s.docs.map(d=>({id:d.id,...d.data()}));drawO()},e=>$('#ol').textContent=e.message)}
 const vL=o=>{const v=o.voucher;return v?(v.type=='ship'?'ফ্রি ডেলিভারি':v.type=='pct'?v.value+'% ছাড়':'৳'+v.value+' ছাড়'):''};
+const SC=S.reduce((m,x,i)=>(m[x]=i,m),{});
+const waNum=p=>{p=String(p||'').replace(/\D/g,'');return p.startsWith('880')?p:p.startsWith('0')?'88'+p:'880'+p};
 function drawO(){if(!$('#fl'))return;const l=OR.filter(o=>flt=='সব'||o.status==flt);
 $('#fl').innerHTML=['সব',...S].map(s=>`<button class="${s==flt?'on':''}" onclick="flt='${s}';drawO()">${s}${s=='সব'?'':' ('+OR.filter(o=>o.status==s).length+')'}</button>`).join('');
-$('#ol').innerHTML=l.map(o=>`<div class="c"><div class="rw"><b>#${E(o.id.slice(0,8).toUpperCase())}</b><span class="tag">${E(o.status)}</span></div>
-<small>${o.createdAt?o.createdAt.toDate().toLocaleString('bn-BD'):''}</small>
-<div>${E(o.name)} · <a href="tel:${E(o.phone)}">${E(o.phone)}</a><br><small>${E(o.email)}</small></div>
-<div>${E(o.district)}, ${E(o.area)}<br>${E(o.address)}</div>
-<div class="it">${(o.items||[]).map(i=>{const u=i.th||PM[i.id];return `<div class="rw" style="justify-content:flex-start;gap:10px;margin:6px 0">${u?`<img class="th" style="width:64px;height:64px;cursor:zoom-in" src="${E(u)}" onclick="bigO('${E(i.id)}',this.src)">`:'<div class="th" style="width:64px;height:64px">ছবি নেই</div>'}<div>${E(i.n)}<br><small>${E(i.col)}${i.sz?', সাইজ '+E(i.sz):''} × ${E(i.qty)} · ৳${E(i.p)}</small></div></div>`}).join('')}</div>
-${o.discount>0?`<div class="it">পণ্যের দাম ৳${E(o.subtotal)}<br>ভাউচার ছাড় −৳${E(o.discount)} <small>(${E(vL(o))})</small><br>ডেলিভারি চার্জ ৳${E(o.delivery)}</div>`:''}
-<b>মোট ৳${E(o.total)}</b> <small>(ডেলিভারি ৳${E(o.delivery)} সহ, ${o.payment=='cod'?'ক্যাশ অন ডেলিভারি':E(o.payment)})</small>
-<div class="bt"><button class="ok" onclick="st('${o.id}','কনফার্মড')">কনফার্ম</button><select onchange="st('${o.id}',this.value)">${S.map(s=>`<option ${s==o.status?'selected':''}>${s}</option>`).join('')}</select><button class="no" onclick="st('${o.id}','বাতিল')">বাতিল</button><button onclick="delO('${o.id}')">মুছুন</button></div></div>`).join('')||'<p class="mid">কোনো অর্ডার নেই।</p>'}
+$('#ol').innerHTML=l.map(o=>{const nw=o.status=='নতুন',ini=Array.from(String(o.name||'?').trim())[0]||'?';
+return `<div class="oc ${nw?'new':''}" data-s="${SC[o.status]??0}">
+<div class="oh"><div><b class="oid">#${E(o.id.slice(0,8).toUpperCase())}</b><small>${o.createdAt&&o.createdAt.toDate?E(o.createdAt.toDate().toLocaleString('bn-BD')):''}</small></div><span class="st">${E(o.status)}</span></div>
+<div class="ocu"><div class="av">${E(ini)}</div><div class="ui"><b>${E(o.name)}</b><small>${E(o.phone)}<br>${E(o.email)}</small></div><div class="ca"><a class="cb c1" href="tel:${E(o.phone)}" aria-label="কল">📞</a><a class="cb c2" href="https://wa.me/${E(waNum(o.phone))}" target="_blank" rel="noopener" aria-label="হোয়াটসঅ্যাপ">💬</a></div></div>
+<div class="adr">📍 ${E(o.district)}, ${E(o.area)}<br>${E(o.address)}</div>
+<div class="its">${(o.items||[]).map(i=>{const u=i.th||PM[i.id];return `<div class="ir">${u?`<img class="th" style="width:64px;height:64px;cursor:zoom-in" src="${E(u)}" onclick="bigO('${E(i.id)}',this.src)">`:'<div class="th" style="width:64px;height:64px">ছবি নেই</div>'}<div>${E(i.n)}<br><small>${E(i.col)}${i.sz?', সাইজ '+E(i.sz):''} × ${E(i.qty)} · ৳${E(i.p)}</small></div></div>`}).join('')}</div>
+<div class="tot"><div class="tr"><span>পণ্যের দাম</span><span>৳${E(o.subtotal)}</span></div>${o.discount>0?`<div class="tr"><span>ভাউচার ছাড় (${E(vL(o))})</span><span>−৳${E(o.discount)}</span></div>`:''}<div class="tr"><span>ডেলিভারি চার্জ</span><span>৳${E(o.delivery)}</span></div><div class="tr gt"><span>মোট (${o.payment=='cod'?'ক্যাশ অন ডেলিভারি':E(o.payment)})</span><b>৳${E(o.total)}</b></div></div>
+<div class="bt"><button class="ok" onclick="st('${o.id}','কনফার্মড')">কনফার্ম</button><select onchange="st('${o.id}',this.value)">${S.map(s=>`<option ${s==o.status?'selected':''}>${s}</option>`).join('')}</select><button class="no" onclick="st('${o.id}','বাতিল')">বাতিল</button><button onclick="delO('${o.id}')">মুছুন</button></div></div>`}).join('')||'<p class="mid">কোনো অর্ডার নেই।</p>'}
 const bigO=(id,src)=>M(`<img src="${E(PM[id]||src)}" style="width:100%;border-radius:8px"><div class="bt"><button class="b" onclick="closeM()">বন্ধ করুন</button></div>`);
 const st=(id,s)=>db.collection('orders').doc(id).update({status:s});
 const delO=id=>confirm('অর্ডারটি স্থায়ীভাবে মুছবেন?')&&db.collection('orders').doc(id).delete();
@@ -166,4 +214,33 @@ async function sendA(uid){const t=g('ci');if(!t)return;$('#ci').value='';
 try{const r=db.collection('chats').doc(uid),ts=firebase.firestore.FieldValue.serverTimestamp();
 await r.collection('messages').add({text:t,from:'admin',createdAt:ts});
 await r.set({lastMsg:'আপনি: '+t,lastAt:ts,unreadAdmin:false},{merge:true})}catch(e){alert('পাঠানো হয়নি: '+e.message)}}
+
+/* ===== নোটিফিকেশন, ইনস্টল ও নতুন অর্ডারের সতর্কবার্তা ===== */
+function swReady(r){return new Promise(res=>{const w=r.installing||r.waiting||r.active;if(!w||w.state=='activated')return res(r);w.addEventListener('statechange',()=>{if(w.state=='activated')res(r)})})}
+async function regSW(){if(SWR||!('serviceWorker' in navigator))return SWR;try{const r=await navigator.serviceWorker.register('admin-sw.js',{scope:'/admin.html'});SWR=await swReady(r)}catch(e){console.error(e)}return SWR}
+async function saveTok(){if(!VAPID||!SWR||!auth.currentUser)return null;try{if(!firebase.messaging.isSupported())return null;const t=await firebase.messaging().getToken({vapidKey:VAPID,serviceWorkerRegistration:SWR});if(t){await db.collection('adminTokens').doc(t).set({t:Date.now(),email:auth.currentUser.email,ua:navigator.userAgent.slice(0,100)})}return t}catch(e){console.error(e);throw e}}
+function nbtn(){const b=$('#nb');if(!b)return;if(!('Notification' in window)){b.style.display='none';return}
+const p=Notification.permission;b.style.display='inline-block';b.textContent=p=='granted'?'🔔 চালু':p=='denied'?'🔕 বন্ধ':'🔔 নোটিফিকেশন চালু করুন';b.onclick=enableNotif}
+async function enableNotif(){if(!('Notification' in window)){alert('এই ব্রাউজারে নোটিফিকেশন চলে না।');return}
+if(Notification.permission=='denied'){alert('নোটিফিকেশন বন্ধ করা আছে। ফোনের সেটিংস থেকে এই সাইট/অ্যাপের নোটিফিকেশন অনুমতি দিন।');return}
+const p=await Notification.requestPermission();nbtn();if(p!='granted')return;
+await regSW();
+if(!VAPID){alert('নোটিফিকেশন চালু হয়েছে (অ্যাপ খোলা থাকলে অর্ডার আসামাত্র জানাবে)। অ্যাপ বন্ধ থাকলেও জানাতে VAPID কী বসাতে হবে।');return}
+try{await saveTok();toast2('🔔 নোটিফিকেশন চালু হয়েছে')}catch(e){alert('নোটিফিকেশন চালু করা যায়নি: '+e.message)}}
+async function initPush(){await regSW();nbtn();if(Notification.permission=='granted'){try{await saveTok()}catch(e){}}}
+function beep(){try{const C=window.AudioContext||window.webkitAudioContext,a=window._ac||(window._ac=new C());a.resume&&a.resume();[0,.18,.36].forEach((t,i)=>{const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=i==2?1180:880;g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.35,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.16);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.17)})}catch(e){}}
+function toast2(h,btn){const t=$('#nt');t.innerHTML=h+(btn||'');t.style.display='flex';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',btn?9000:2200)}
+function setBadge(n){const b=$('#t1');if(b)b.innerHTML='অর্ডার'+(n?`<span class="nb">${n}</span>`:'')}
+function newAlert(id,o){beep();try{navigator.vibrate&&navigator.vibrate([200,100,200,100,300])}catch(e){}
+const n=Array.isArray(o.items)?o.items.reduce((s,i)=>s+(+i.qty||1),0):0;
+toast2(`<span>🛍️ নতুন অর্ডার! ${E(o.name||'')} · ৳${E(o.total||0)}</span>`,'<button onclick="flt=\'নতুন\';tab(1);$(\'#nt\').style.display=\'none\'">দেখুন</button>');
+if(document.hidden&&'Notification' in window&&Notification.permission=='granted'&&SWR){SWR.showNotification('নতুন অর্ডার এসেছে!',{body:(o.name||'গ্রাহক')+' · ৳'+(o.total||0)+(n?' · '+n+'টি পণ্য':''),icon:'/icon-192.png',badge:'/icon-192.png',tag:'order-'+id,renotify:true,vibrate:[200,100,200,100,300],data:{url:'/admin.html'}}).catch(()=>{})}}
+function watchOrders(){ow&&ow();owInit=false;
+ow=db.collection('orders').orderBy('createdAt','desc').limit(50).onSnapshot(s=>{
+setBadge(s.docs.filter(d=>(d.data().status||'নতুন')=='নতুন').length);
+if(owInit){s.docChanges().forEach(c=>{if(c.type!='added')return;const o=c.doc.data(),t=o.createdAt&&o.createdAt.toDate?o.createdAt.toDate().getTime():Date.now();if(Date.now()-t<120000)newAlert(c.doc.id,o)})}
+owInit=true},e=>console.error(e))}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;$('#ib').style.display='inline-block'});
+$('#ib').onclick=async()=>{if(!dip)return;dip.prompt();await dip.userChoice;dip=null;$('#ib').style.display='none'};
+addEventListener('appinstalled',()=>{$('#ib').style.display='none'});
 </script></body></html>
