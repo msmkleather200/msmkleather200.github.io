@@ -10,7 +10,7 @@
 <meta property="og:image" content="https://msmkleather200.github.io/icon-512.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"M/S, M.K. Leather","alternateName":["MK Leather","M.K. Leather"],"url":"https://msmkleather200.github.io/"}</script>
 <script src="anim.js?v=5" defer></script>
- <script src="ai.js?v=1" defer></script>
+ <script src="ai.js?v=2" defer></script>
 <meta property="og:type" content="website"><meta property="og:title" content="M/S, M.K. Leather"><meta property="og:description" content="প্রিমিয়াম কোয়ালিটি লেদার পণ্য - ক্যাশ অন ডেলিভারি।"><meta property="og:locale" content="bn_BD">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="manifest.json">
@@ -604,7 +604,7 @@ M(`<h3>💬 চ্যাট</h3><div class="cb">আসসালামু আল�
 <div class="cq">${Q.map(t=>`<span class="chip" onclick="sendChat('${t}')">${t}</span>`).join('')}</div><div id="cl"></div><p class="er" id="ce"></p>
 <div class="cbar"><input id="cm" placeholder="আপনার বার্তা লিখুন..." onkeydown="if(event.key=='Enter')sendChat()"><button onclick="sendChat()" aria-label="পাঠান">➤</button></div>`);
 try{chatUn=db.collection('chats').doc(user.uid).collection('messages').orderBy('createdAt').onSnapshot(sn=>{
-$('#cl').innerHTML=sn.docs.map(d=>{const m=d.data();return `<div class="${m.from=='admin'?'ba':'bu'}">${esc(m.text)}</div>`}).join('');
+$('#cl').innerHTML=sn.docs.map(d=>{const m=d.data();return `<div class="${m.from=='admin'?'ba':'bu'}">${(window.linkify||esc)(m.text)}</div>`}).join('');
 const mb=$('#mb');mb.scrollTop=mb.scrollHeight},e=>{$('#ce').textContent='চ্যাট লোড করা যায়নি। ইন্টারনেট পরীক্ষা করুন।'})}catch(e){$('#ce').textContent='চ্যাট চালু করা যায়নি।'}}
 async function sendChat(t){t=t||($('#cm')&&$('#cm').value.trim());if(!t||!user)return;if($('#cm'))$('#cm').value='';const ce=$('#ce');if(ce)ce.textContent='';
 try{const c=db.collection('chats').doc(user.uid),ts=firebase.firestore.FieldValue.serverTimestamp();
